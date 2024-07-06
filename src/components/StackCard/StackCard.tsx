@@ -1,10 +1,20 @@
 import React from 'react';
 import './StackCard.css';
 
+interface Stack {
+    title: string;
+    description: string;
+    links: string[];
+}
+
+interface StackCardProps {
+    stack: Stack;
+}
+
 const StackCard: React.FC = () => {
     return (
         <div className="stack-card">
-            <h3 className="stack-card-title">Leetcode</h3>
+            <div className="stack-card-title">Leetcode</div>
         </div>
     )
 }

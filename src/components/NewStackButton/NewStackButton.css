@@ -30,6 +30,7 @@
   border: 0;
   transition: box-shadow .2s;
   font-family: 'Inter', sans-serif;
+  cursor: pointer;
 }
 
 .new-stack-button:hover {
