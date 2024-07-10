@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 
@@ -40,7 +41,7 @@ const StackPage: React.FC = () => {
             <ul>
                 {stack.items.map(item => (
                     <li key={item.id}>
-                        <p>{item.content}</p>
+                        <Link to={item.content} target="_blank">{item.content}</Link>
                     </li>
                 ))}
             </ul>

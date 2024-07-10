@@ -32,7 +32,7 @@ const StackCard: React.FC<StackCardProps> = ({ stack }) => {
 
     return (
         <div>
-            <Link to={`${window.location.origin}/stack/${stack.id}`} style={{ textDecoration: 'none', color: 'inherit'}}>
+            <Link to={`/stack/${stack.id}`} style={{ textDecoration: 'none', color: 'inherit'}}>
                 <div className="stack-card">
                     <div className="link-icon">
                         <LinkIcon onClick={copyStackURLToClipboard}></LinkIcon>
