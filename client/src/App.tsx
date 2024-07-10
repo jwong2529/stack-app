@@ -1,11 +1,16 @@
 import React from 'react';
+import {BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import HomePage from './pages/HomePage/HomePage';
+import StackPage from './pages/StackPage/StackPage';
 
 const App: React.FC = () => {
   return (
-    <div className="App">
-      <HomePage/>
-    </div>
+    <Router>
+      <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/stack/:id" element={<StackPage />} />
+      </Routes>
+    </Router>
   );
 };
 

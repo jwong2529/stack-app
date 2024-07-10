@@ -9,7 +9,7 @@ const { Pool } = require('pg');
 const app = express();
 const port = 8000;  
 
-//what is this
+//what is this  
 const corsOptions = {
     origin: 'http://localhost:3000', // Replace with your frontend URL
     optionsSuccessStatus: 200,
@@ -109,6 +109,58 @@ app.get('/api/stacks', async (req, res) => {
 });
 
 //get a stack
+app.get('/api/stacks/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        const result = await pool.query(`
+            SELECT
+                s.id as stack_id,
+                s.title,
+                s.description,
+                s.created_at as stack_created_at,
+                s.updated_at as stack_updated_at,
+                i.item_id,
+                i.item_type,
+                i.content,
+                i.created_at as item_created_at,
+                i.updated_at as item_updated_at
+            FROM stacks s
+            LEFT JOIN items i ON s.id = i.stack_id
+            WHERE s.id = $1
+        `, [id]);
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({ msg: 'Stack not found' });
+        }
+
+        const stack = {
+            id: result.rows[0].stack_id,
+            title: result.rows[0].title,
+            description: result.rows[0].description,
+            created_at: result.rows[0].stack_created_at,
+            updated_at: result.rows[0].stack_updated_at,
+            items: []
+        };
+
+        result.rows.forEach(row => {
+            if (row.item_id) {
+                stack.items.push({
+                    id: row.item_id,
+                    item_type: row.item_type,
+                    content: row.content,
+                    created_at: row.item_created_at,
+                    updated_at: row.item_updated_at
+                });
+            }
+        });
+
+        res.json(stack);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+});
+
 
 //update a stack
 

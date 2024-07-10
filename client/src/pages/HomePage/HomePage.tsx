@@ -2,7 +2,6 @@ import React, {useState, useEffect} from 'react';
 import axios from 'axios';
 import './HomePage.css';
 import Banner from '../../components/Banner/Banner';
-// import NewStackButton from '../../components/NewStackButton/NewStackButton';
 import StackCard from '../../components/StackCard/StackCard';
 import CreateStackModal from '../../components/CreateStackModal/CreateStackModal';
 

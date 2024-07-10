@@ -1,7 +1,8 @@
 .stack-card {
     display: flex;
-    justify-content: center;
-    align-items: center;
+    flex-direction: column;
+    /* justify-content: center;
+    align-items: center; */
     background: rgba(158, 223, 224, 0.42);
     border-radius: 10px;
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
@@ -14,9 +15,24 @@
 }
 
 .stack-card:hover {
-    transform: scale(1.05);
+    /* transform: scale(1.05); */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+}
+
+.link-icon {
+    display: flex;
+    justify-content: end;
+    padding: 0 5px;
+}
+
+.link-icon:hover {
+    transform: scale(1.01);
 }
 
 .stack-card-title {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     font-size: 0.8rem;
 }
