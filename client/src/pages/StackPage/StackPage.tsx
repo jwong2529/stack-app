@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useParams } from 'react-router-dom';
+import Microlink from '@microlink/react';
+import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 interface Item {
@@ -18,6 +19,7 @@ interface Stack {
 const StackPage: React.FC = () => {
     const { id } = useParams<{ id: string }>();
     const [stack, setStack] = useState<Stack | null>(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchStack = async () => {
@@ -32,6 +34,15 @@ const StackPage: React.FC = () => {
         fetchStack();
     }, [id]);
 
+    const deleteStack = async () => {
+        try {
+            await axios.delete(`http://localhost:8000/api/stacks/${id}`);
+            navigate('/');
+        } catch (err) {
+            console.error('Error deleting stack:', err);
+        }
+    };
+
     if (!stack) return <div>Loading...</div>;
 
     return (
@@ -41,10 +52,11 @@ const StackPage: React.FC = () => {
             <ul>
                 {stack.items.map(item => (
                     <li key={item.id}>
-                        <Link to={item.content} target="_blank">{item.content}</Link>
+                        <Microlink url={item.content} />
                     </li>
                 ))}
             </ul>
+            <button className="delete-stack-button" onClick={deleteStack}>Delete Stack</button>
         </div>
     );
 };

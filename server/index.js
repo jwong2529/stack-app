@@ -165,6 +165,24 @@ app.get('/api/stacks/:id', async (req, res) => {
 //update a stack
 
 //delete a stack
+app.delete('/api/stacks/:id', async (req, res) => {
+    const { id } = req.params;
+    const client = await pool.connect();
+
+    try {
+        await client.query('BEGIN');
+        await client.query('DELETE FROM items WHERE stack_id = $1', [id]);
+        await client.query('DELETE FROM stacks WHERE id = $1', [id]);
+        await client.query('COMMIT');
+        res.status(200).json({ msg: 'Stack and its items deleted successfully' });
+    } catch (err) {
+        await client.query('ROLLBACK');
+        console.error('Error deleting stack and its items:', err);
+        res.status(500).send('Server Error');
+    } finally {
+        client.release();
+    }
+});
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
