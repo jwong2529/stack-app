@@ -1,6 +1,40 @@
+.stack-page {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.stack-info {
+    text-align: center;
+}
+
+.button-group {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2px;
+    padding: 0 5px;
+    background-color: lightblue;
+    border-radius: 8px;
+}
+
+hr {
+    min-height: 15px;
+}
 .delete-stack-button {
-    background-color: red;
-    margin: 20px;
-    padding: 10px;
-    color: white;
+    cursor: pointer;
+}
+
+.delete-stack-button:hover {
+    transform: scale(1.5);
+}
+
+.share-stack-button {
+    cursor: pointer;
+}
+
+.share-stack-button:hover {
+    transform: scale(1.5);
 }

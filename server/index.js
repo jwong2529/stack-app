@@ -163,6 +163,10 @@ app.get('/api/stacks/:id', async (req, res) => {
 
 
 //update a stack
+// app.put('/api/stacks/:id', async (req, res) => {
+//     const { id } = req.params;
+//     const P
+// });
 
 //delete a stack
 app.delete('/api/stacks/:id', async (req, res) => {

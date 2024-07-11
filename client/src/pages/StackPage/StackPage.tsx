@@ -3,6 +3,11 @@ import { Link } from 'react-router-dom';
 import Microlink from '@microlink/react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import './StackPage.css';
+import DeleteIcon from '@mui/icons-material/Delete';
+import SendIcon from '@mui/icons-material/Send';
 
 interface Item {
     id: number;
@@ -43,20 +48,42 @@ const StackPage: React.FC = () => {
         }
     };
 
+    const cautionDeleteStack = () => {
+        // TODO
+    };
+
+    const shareStack = () => {
+        navigator.clipboard.writeText(`${window.location.origin}/stack/${id}`);
+        toast('Stack link copied to clipboard!', {
+            position: "top-right",
+            autoClose: 2000,
+            hideProgressBar: true,
+        });
+    }
+
     if (!stack) return <div>Loading...</div>;
 
     return (
-        <div>
-            <h2>{stack.title}</h2>
-            <p>{stack.description}</p>
-            <ul>
-                {stack.items.map(item => (
-                    <li key={item.id}>
-                        <Microlink url={item.content} />
-                    </li>
-                ))}
-            </ul>
-            <button className="delete-stack-button" onClick={deleteStack}>Delete Stack</button>
+        <div className="stack-page">
+            <div className="stack-info">
+                <h2>{stack.title}</h2>
+                <p>{stack.description}</p>
+            </div>
+            <ToastContainer />
+            <div className="button-group">
+                <SendIcon className="share-stack-button" onClick={shareStack}></SendIcon>
+                <hr></hr>
+                <DeleteIcon className = "delete-stack-button" onClick={deleteStack}></DeleteIcon>
+            </div>
+            <div className="stack-items">
+                <ul>
+                    {stack.items.map(item => (
+                        <li key={item.id}>
+                            <Microlink url={item.content} />
+                        </li>
+                    ))}
+                </ul>
+            </div>
         </div>
     );
 };
