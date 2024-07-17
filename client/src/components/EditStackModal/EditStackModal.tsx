@@ -32,6 +32,10 @@ const ModalContainer = styled('div')(({ theme }) => ({
 }));
 
 const Paper = styled('div')(({ theme }) => ({
+    display: 'flex',
+    flexDirection: 'column',
+    gap: theme.spacing(2),
+
     backgroundColor: theme.palette.background.paper,
     border: '2px solid #000',
     boxShadow: theme.shadows[5],
@@ -44,6 +48,12 @@ const DeleteIconStyled = styled(DeleteIcon)({
     cursor: 'pointer',
 });
 
+const ItemSection = styled('div')(({ theme }) => ({
+    display: 'flex',
+    flexDirection: 'column',
+    gap: theme.spacing(0.5),
+}));
+
 const ItemRow = styled('div')({
     display: 'flex',
     justifyContent: 'space-between',
@@ -51,7 +61,7 @@ const ItemRow = styled('div')({
 });
 
 const NewItemSection = styled('div')(({ theme }) => ({
-    marginTop: theme.spacing(2),
+    // marginTop: theme.spacing(2),
 }));
 
 const ButtonsSection = styled('div')(({ theme }) => ({
@@ -112,14 +122,14 @@ const EditStackModal: React.FC<EditStackModalProps> = ({ open, onClose, stack, o
                         multiline
                         sx={{ p: 0, m: 0 }}
                     />
-                    <div>
+                    <ItemSection>
                         {editedStack.items.map(item => (
                             <ItemRow key={item.id}>
                                 <span>{item.content}</span>
                                 <DeleteIconStyled onClick={() => handleDeleteItem(item.id)} />
                             </ItemRow>
                         ))}
-                    </div>
+                    </ItemSection>
                     <NewItemSection>
                         <TextField
                             label="Add new link"

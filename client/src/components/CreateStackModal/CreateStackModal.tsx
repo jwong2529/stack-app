@@ -70,7 +70,7 @@ const CreateStackModal: FC<ModalProps> = ({ show, handleClose, addStack }) => {
                         onChange={(e) => setLinkInput(e.target.value)}
                         placeholder="Enter link"
                     />
-                    <button onClick = {handleAddLink}>Add to Link</button>
+                    <button onClick = {handleAddLink}>Add Link</button>
                     <ul className="links-list">
                         {links.map((link, index) =>(
                             <li key={index}>{link}</li>

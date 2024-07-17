@@ -7,6 +7,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './StackPage.css';
 import EditStackModal from '../../components/EditStackModal/EditStackModal';
+import DeleteStackConfirmationModal from '../../components/DeleteStackConfirmationModal/DeleteStackConfirmationModal';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SendIcon from '@mui/icons-material/Send';
@@ -27,6 +28,7 @@ const StackPage: React.FC = () => {
     const { id } = useParams<{ id: string }>();
     const [stack, setStack] = useState<Stack | null>(null);
     const [editModalOpen, setEditModalOpen] = useState<boolean>(false);
+    const [deleteStackModalOpen, setDeleteStackModalOpen] = useState<boolean>(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -51,9 +53,14 @@ const StackPage: React.FC = () => {
         }
     };
 
-    const cautionDeleteStack = () => {
-        // TODO
-    };
+    const confirmDeleteStack = () => {
+        setDeleteStackModalOpen(true);
+    }
+
+    const handleConfirmDeleteStack = async () => {
+        setDeleteStackModalOpen(false);
+        await deleteStack();
+    }
 
     const shareStack = () => {
         navigator.clipboard.writeText(`${window.location.origin}/stack/${id}`);
@@ -78,13 +85,18 @@ const StackPage: React.FC = () => {
                 <hr></hr>
                 <SendIcon className="share-stack-button" onClick={shareStack}></SendIcon>
                 <hr></hr>
-                <DeleteIcon className = "delete-stack-button" onClick={deleteStack}></DeleteIcon>
+                <DeleteIcon className = "delete-stack-button" onClick={confirmDeleteStack}></DeleteIcon>
             </div>
             <EditStackModal
                 open={editModalOpen}
                 onClose={() => setEditModalOpen(false)}
                 stack={stack}
                 onSave={setStack}
+            />
+            <DeleteStackConfirmationModal
+                open={deleteStackModalOpen}
+                onClose={() => setDeleteStackModalOpen(false)}
+                onConfirm={handleConfirmDeleteStack}
             />
             <div className="stack-items">
                 <ul>
