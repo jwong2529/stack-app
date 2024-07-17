@@ -25,6 +25,19 @@ interface EditStackModalProps {
     onSave: (updatedStack: Stack) => void;
 }
 
+const style = {
+    position: 'absolute' as 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 500,
+    maxHeight: '70vh',
+    bgcolor: 'background.paper',
+    boxShadow: 24,
+    borderRadius: 2,
+    overflowY: 'auto', 
+};
+
 const ModalContainer = styled('div')(({ theme }) => ({
     display: 'flex',
     alignItems: 'center',
@@ -37,7 +50,6 @@ const Paper = styled('div')(({ theme }) => ({
     gap: theme.spacing(2),
 
     backgroundColor: theme.palette.background.paper,
-    border: '2px solid #000',
     boxShadow: theme.shadows[5],
     padding: theme.spacing(2, 4, 3),
     width: '80%',
@@ -102,9 +114,16 @@ const EditStackModal: React.FC<EditStackModalProps> = ({ open, onClose, stack, o
     };
 
     return (
-        <Modal open={open} onClose={onClose}>
+        <Modal 
+            open={open} 
+            onClose={(_, reason) => {
+                if (reason !== "backdropClick") {
+                    onClose();
+                }
+            }}
+        >
             <ModalContainer>
-                <Paper>
+                <Paper sx={style}>
                     <h2>Edit Stack</h2>
                     <TextField
                         label="Title"

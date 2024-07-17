@@ -27,7 +27,14 @@ interface DeleteConfirmationModalProps {
 
 const DeleteStackConfirmationModal: React.FC<DeleteConfirmationModalProps> = ({ open, onClose, onConfirm }) => {
     return (
-        <Modal open={open} onClose={onClose}>
+        <Modal 
+            open={open} 
+            onClose={(_, reason) => {
+                if (reason !== "backdropClick") {
+                    onClose();
+                }
+            }}
+        >
             <ModalContainer>
                 <Paper>
                     <h2>Confirm deletion</h2>
