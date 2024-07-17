@@ -1,9 +1,14 @@
 .stack-page {
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    /* justify-content: center; */
     align-items: center;
     padding: 20px;
+
+    background:rgba(160, 197, 236, 0.7);
+    --webkit-backdrop-filter:blur(10px);
+    backdrop-filter:blur(10px);
+    height:100vh;
 }
 
 .stack-info {
@@ -23,18 +28,15 @@
 hr {
     min-height: 15px;
 }
-.delete-stack-button {
+
+.edit-stack-button, .delete-stack-button, .share-stack-button {
     cursor: pointer;
 }
 
-.delete-stack-button:hover {
+.edit-stack-button:hover, .delete-stack-button:hover, .share-stack-button:hover {
     transform: scale(1.5);
 }
 
-.share-stack-button {
-    cursor: pointer;
-}
-
-.share-stack-button:hover {
-    transform: scale(1.5);
+li {
+    margin-bottom: 10px;
 }

@@ -163,10 +163,58 @@ app.get('/api/stacks/:id', async (req, res) => {
 
 
 //update a stack
-// app.put('/api/stacks/:id', async (req, res) => {
-//     const { id } = req.params;
-//     const P
-// });
+app.put('/api/stacks/:id', async (req, res) => {
+    const { id } = req.params;
+    const { title, description, items } = req.body;
+    const client = await pool.connect();
+
+    try {
+        await client.query('BEGIN');
+
+        if (title || description) {
+            const updateFields = [];
+            const values = [];
+
+            if (title) {
+                updateFields.push('title = $' + (values.length + 1));
+                values.push(title);
+            }
+            if (description) {
+                updateFields.push('description = $' + (values.length + 1));
+                values.push(description);
+            }
+            if (values.length > 0) {
+                values.push(id);
+                const updateQuery = `UPDATE stacks SET ${updateFields.join(', ')} WHERE id = $${values.length} RETURNING *`;
+                await client.query(updateQuery, values);
+            }
+        }
+
+        if (items && items.length > 0) {
+            // delete existing items
+            await client.query('DELETE FROM items WHERE stack_id = $1', [id]);
+
+            // insert new items
+            const itemPromises = items.map(item => 
+                client.query(
+                    'INSERT INTO items (stack_id, item_type, content) VALUES ($1, $2, $3) RETURNING *',
+                    [id, item.item_type, item.content]
+                )
+            );
+
+            await Promise.all(itemPromises);
+        }
+
+        await client.query('COMMIT');
+        res.status(200).json({ msg: 'Stack updated succsesfully'});
+    } catch (err) {
+        await client.query('ROLLBACK');
+        console.error('Error updating stack:', err);
+        res.status(500).send('Server error');
+    } finally {
+        client.release();
+    }
+});
 
 //delete a stack
 app.delete('/api/stacks/:id', async (req, res) => {

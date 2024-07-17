@@ -6,6 +6,8 @@ import axios from 'axios';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './StackPage.css';
+import EditStackModal from '../../components/EditStackModal/EditStackModal';
+import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SendIcon from '@mui/icons-material/Send';
 
@@ -24,6 +26,7 @@ interface Stack {
 const StackPage: React.FC = () => {
     const { id } = useParams<{ id: string }>();
     const [stack, setStack] = useState<Stack | null>(null);
+    const [editModalOpen, setEditModalOpen] = useState<boolean>(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -71,10 +74,18 @@ const StackPage: React.FC = () => {
             </div>
             <ToastContainer />
             <div className="button-group">
+                <EditIcon className="edit-stack-button" onClick={() => setEditModalOpen(true)}></EditIcon>
+                <hr></hr>
                 <SendIcon className="share-stack-button" onClick={shareStack}></SendIcon>
                 <hr></hr>
                 <DeleteIcon className = "delete-stack-button" onClick={deleteStack}></DeleteIcon>
             </div>
+            <EditStackModal
+                open={editModalOpen}
+                onClose={() => setEditModalOpen(false)}
+                stack={stack}
+                onSave={setStack}
+            />
             <div className="stack-items">
                 <ul>
                     {stack.items.map(item => (
