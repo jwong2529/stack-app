@@ -2,6 +2,9 @@
 const dotenv = require('dotenv');
 dotenv.config();
 
+// import uuid generator
+const { v4: uuidv4 } = require('uuid');
+
 const express = require('express');
 const cors = require('cors');
 const { Pool } = require('pg');
@@ -34,17 +37,21 @@ app.use(express.json());
 app.post('/api/stacks', async (req, res) => {
     try {
         const { title, description, items } = req.body;
+
+        // generate uuid for the new stack
+        const stackUuid = uuidv4();
+
         const newStack = await pool.query(
-            'INSERT INTO stacks (title, description) VALUES ($1, $2) RETURNING *',
-            [title, description]
+            'INSERT INTO stacks (title, description, uuid) VALUES ($1, $2, $3) RETURNING *',
+            [title, description, stackUuid]
         );
 
-        const stackId = newStack.rows[0].id;
+        const insertedStackUuid = newStack.rows[0].uuid
 
         const itemPromises = items.map(item =>
             pool.query(
-                'INSERT INTO items (stack_id, item_type, content) VALUES ($1, $2, $3) RETURNING *',
-                [stackId, item.item_type, item.content]
+                'INSERT INTO items (stack_uuid, item_type, content) VALUES ($1, $2, $3) RETURNING *',
+                [insertedStackUuid, item.item_type, item.content]
             )
         );
 
@@ -62,7 +69,7 @@ app.get('/api/stacks', async (req, res) => {
     try {
         const result = await pool.query(`
             SELECT
-                s.id as stack_id,
+                s.uuid as stack_uuid,
                 s.title,
                 s.description,
                 s.created_at as stack_created_at,
@@ -73,15 +80,15 @@ app.get('/api/stacks', async (req, res) => {
                 i.created_at as item_created_at,
                 i.updated_at as item_updated_at
             FROM stacks s
-            LEFT JOIN items i ON s.id = i.stack_id
+            LEFT JOIN items i ON s.uuid = i.stack_uuid
         `);
 
         const stacks = {};
 
         result.rows.forEach(row => {
-            if (!stacks[row.stack_id]) {
-                stacks[row.stack_id] = {
-                    id: row.stack_id,
+            if (!stacks[row.stack_uuid]) {
+                stacks[row.stack_uuid] = {
+                    uuid: row.stack_uuid,
                     title: row.title,
                     description: row.description,
                     created_at: row.stack_created_at,
@@ -91,7 +98,7 @@ app.get('/api/stacks', async (req, res) => {
             }
 
             if (row.item_id) {
-                stacks[row.stack_id].items.push({
+                stacks[row.stack_uuid].items.push({
                     id: row.item_id,
                     item_type: row.item_type,
                     content: row.content,
@@ -109,12 +116,12 @@ app.get('/api/stacks', async (req, res) => {
 });
 
 //get a stack
-app.get('/api/stacks/:id', async (req, res) => {
-    const { id } = req.params;
+app.get('/api/stacks/:uuid', async (req, res) => {
+    const { uuid } = req.params;
     try {
         const result = await pool.query(`
             SELECT
-                s.id as stack_id,
+                s.uuid as stack_uuid,
                 s.title,
                 s.description,
                 s.created_at as stack_created_at,
@@ -125,16 +132,16 @@ app.get('/api/stacks/:id', async (req, res) => {
                 i.created_at as item_created_at,
                 i.updated_at as item_updated_at
             FROM stacks s
-            LEFT JOIN items i ON s.id = i.stack_id
-            WHERE s.id = $1
-        `, [id]);
+            LEFT JOIN items i ON s.uuid = i.stack_uuid
+            WHERE s.uuid = $1
+        `, [uuid]);
 
         if (result.rows.length === 0) {
             return res.status(404).json({ msg: 'Stack not found' });
         }
 
         const stack = {
-            id: result.rows[0].stack_id,
+            uuid: result.rows[0].stack_uuid,
             title: result.rows[0].title,
             description: result.rows[0].description,
             created_at: result.rows[0].stack_created_at,
@@ -163,8 +170,8 @@ app.get('/api/stacks/:id', async (req, res) => {
 
 
 //update a stack
-app.put('/api/stacks/:id', async (req, res) => {
-    const { id } = req.params;
+app.put('/api/stacks/:uuid', async (req, res) => {
+    const { uuid } = req.params;
     const { title, description, items } = req.body;
     const client = await pool.connect();
 
@@ -184,21 +191,21 @@ app.put('/api/stacks/:id', async (req, res) => {
                 values.push(description);
             }
             if (values.length > 0) {
-                values.push(id);
-                const updateQuery = `UPDATE stacks SET ${updateFields.join(', ')} WHERE id = $${values.length} RETURNING *`;
+                values.push(uuid);
+                const updateQuery = `UPDATE stacks SET ${updateFields.join(', ')} WHERE uuid = $${values.length} RETURNING *`;
                 await client.query(updateQuery, values);
             }
         }
 
         if (items && items.length > 0) {
             // delete existing items
-            await client.query('DELETE FROM items WHERE stack_id = $1', [id]);
+            await client.query('DELETE FROM items WHERE stack_uuid = $1', [uuid]);
 
             // insert new items
             const itemPromises = items.map(item => 
                 client.query(
-                    'INSERT INTO items (stack_id, item_type, content) VALUES ($1, $2, $3) RETURNING *',
-                    [id, item.item_type, item.content]
+                    'INSERT INTO items (stack_uuid, item_type, content) VALUES ($1, $2, $3) RETURNING *',
+                    [uuid, item.item_type, item.content]
                 )
             );
 
@@ -217,14 +224,14 @@ app.put('/api/stacks/:id', async (req, res) => {
 });
 
 //delete a stack
-app.delete('/api/stacks/:id', async (req, res) => {
-    const { id } = req.params;
+app.delete('/api/stacks/:uuid', async (req, res) => {
+    const { uuid } = req.params;
     const client = await pool.connect();
 
     try {
         await client.query('BEGIN');
-        await client.query('DELETE FROM items WHERE stack_id = $1', [id]);
-        await client.query('DELETE FROM stacks WHERE id = $1', [id]);
+        await client.query('DELETE FROM items WHERE stack_uuid = $1', [uuid]);
+        await client.query('DELETE FROM stacks WHERE uuid = $1', [uuid]);
         await client.query('COMMIT');
         res.status(200).json({ msg: 'Stack and its items deleted successfully' });
     } catch (err) {

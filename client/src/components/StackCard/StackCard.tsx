@@ -11,7 +11,7 @@ interface Item {
 }
 
 interface Stack {
-    id: number;
+    uuid: string;
     title: string;
     description: string;
     items: Item[];
@@ -24,7 +24,7 @@ interface StackCardProps {
 const StackCard: React.FC<StackCardProps> = ({ stack }) => {
 
     const copyStackURLToClipboard = () => {
-        navigator.clipboard.writeText(`${window.location.origin}/stack/${stack.id}`);
+        navigator.clipboard.writeText(`${window.location.origin}/stack/${stack.uuid}`);
         toast('Stack link copied to clipboard!', {
             position: "top-right",
             autoClose: 2000,
@@ -41,7 +41,7 @@ const StackCard: React.FC<StackCardProps> = ({ stack }) => {
     return (
         <div>
             <ToastContainer />
-            <Link to={`/stack/${stack.id}`} style={{ textDecoration: 'none', color: 'inherit'}}>
+            <Link to={`/stack/${stack.uuid}`} style={{ textDecoration: 'none', color: 'inherit'}}>
                 <div className="stack-card">
                     <div className="link-icon">
                         <LinkIcon onClick={handleLinkIconClick}></LinkIcon>

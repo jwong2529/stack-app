@@ -12,7 +12,7 @@ interface Item {
 }
 
 interface Stack {
-    id: number;
+    uuid: string;
     title: string;
     description: string;
     items: Item[];
@@ -54,7 +54,7 @@ const HomePage: React.FC = () => {
                 My Stacks
                 <div className="stack-card-list">
                     {stacks.map((stack) => (
-                        <StackCard key={stack.id} stack = {stack} />
+                        <StackCard key={stack.uuid} stack = {stack} />
                     ))}
                 </div>
             </div>

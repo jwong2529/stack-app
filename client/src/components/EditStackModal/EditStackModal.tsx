@@ -12,7 +12,7 @@ interface Item {
 }
 
 interface Stack {
-    id: number;
+    uuid: string;
     title: string;
     description: string;
     items: Item[];
@@ -105,7 +105,7 @@ const EditStackModal: React.FC<EditStackModalProps> = ({ open, onClose, stack, o
 
     const handleSaveChanges = async () => {
         try {
-            await axios.put(`http://localhost:8000/api/stacks/${stack.id}`, editedStack);
+            await axios.put(`http://localhost:8000/api/stacks/${stack.uuid}`, editedStack);
             onSave(editedStack);
             onClose();
         } catch (err) {

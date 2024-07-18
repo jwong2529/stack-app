@@ -18,14 +18,14 @@ interface Item {
 }
 
 interface Stack {
-    id: number;
+    uuid: string;
     title: string;
     description: string;
     items: Item[];
 }
 
 const StackPage: React.FC = () => {
-    const { id } = useParams<{ id: string }>();
+    const { uuid } = useParams<{ uuid: string }>();
     const [stack, setStack] = useState<Stack | null>(null);
     const [editModalOpen, setEditModalOpen] = useState<boolean>(false);
     const [deleteStackModalOpen, setDeleteStackModalOpen] = useState<boolean>(false);
@@ -34,7 +34,7 @@ const StackPage: React.FC = () => {
     useEffect(() => {
         const fetchStack = async () => {
             try {
-                const res = await axios.get(`http://localhost:8000/api/stacks/${id}`);
+                const res = await axios.get(`http://localhost:8000/api/stacks/${uuid}`);
                 setStack(res.data);
             } catch (err) {
                 console.error('Error fetching stack:', err);
@@ -42,11 +42,11 @@ const StackPage: React.FC = () => {
         };
 
         fetchStack();
-    }, [id]);
+    }, [uuid]);
 
     const deleteStack = async () => {
         try {
-            await axios.delete(`http://localhost:8000/api/stacks/${id}`);
+            await axios.delete(`http://localhost:8000/api/stacks/${uuid}`);
             navigate('/');
         } catch (err) {
             console.error('Error deleting stack:', err);
@@ -63,7 +63,7 @@ const StackPage: React.FC = () => {
     }
 
     const shareStack = () => {
-        navigator.clipboard.writeText(`${window.location.origin}/stack/${id}`);
+        navigator.clipboard.writeText(`${window.location.origin}/stack/${uuid}`);
         toast('Stack link copied to clipboard!', {
             position: "top-right",
             autoClose: 2000,

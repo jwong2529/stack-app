@@ -1,7 +1,7 @@
     CREATE DATABASE stackapp;
 
     CREATE TABLE stacks(
-        id SERIAL PRIMARY KEY,
+        uuid UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
         title VARCHAR(50),
         description VARCHAR(255),
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -10,7 +10,7 @@
 
     CREATE TABLE items(
         item_id SERIAL PRIMARY KEY,
-        stack_id INTEGER REFERENCES stacks(id) ON DELETE CASCADE,
+        stack_uuid UUID REFERENCES stacks(uuid) ON DELETE CASCADE,
         item_type VARCHAR(255),
         content TEXT,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
