@@ -58,6 +58,11 @@ const Paper = styled('div')(({ theme }) => ({
 
 const DeleteIconStyled = styled(DeleteIcon)({
     cursor: 'pointer',
+    marginLeft: '8px',
+    transition: 'transform 0.2s ease-in-out',
+    '&:hover': {
+        transform: 'scale(1.2)',
+    },
 });
 
 const ItemSection = styled('div')(({ theme }) => ({
@@ -70,6 +75,18 @@ const ItemRow = styled('div')({
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
+    backgroundColor: '#f5f5f5',
+    padding: '8px',
+    borderRadius: '4px',
+    marginBottom: '8px',
+    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+});
+
+const ItemContent = styled('span')({
+    display: 'flex',
+    flexWrap: 'wrap',
+    wordBreak: 'break-word',
+    flex: '1',
 });
 
 const NewItemSection = styled('div')(({ theme }) => ({
@@ -144,7 +161,7 @@ const EditStackModal: React.FC<EditStackModalProps> = ({ open, onClose, stack, o
                     <ItemSection>
                         {editedStack.items.map(item => (
                             <ItemRow key={item.id}>
-                                <span>{item.content}</span>
+                                <ItemContent>{item.content}</ItemContent>
                                 <DeleteIconStyled onClick={() => handleDeleteItem(item.id)} />
                             </ItemRow>
                         ))}

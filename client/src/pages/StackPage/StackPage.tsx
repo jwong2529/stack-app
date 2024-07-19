@@ -1,16 +1,16 @@
-import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import Microlink from '@microlink/react';
+import React, { useEffect, useState, Suspense } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './StackPage.css';
-import EditStackModal from '../../components/EditStackModal/EditStackModal';
-import DeleteStackConfirmationModal from '../../components/DeleteStackConfirmationModal/DeleteStackConfirmationModal';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SendIcon from '@mui/icons-material/Send';
+
+const EditStackModal = React.lazy(() => import('../../components/EditStackModal/EditStackModal'));
+const DeleteStackConfirmationModal = React.lazy(() => import('../../components/DeleteStackConfirmationModal/DeleteStackConfirmationModal'));
+const LinkRenderer = React.lazy(() => import('../../components/LinkRenderer'));
 
 interface Item {
     id: number;
@@ -87,26 +87,24 @@ const StackPage: React.FC = () => {
                 <hr></hr>
                 <DeleteIcon className = "delete-stack-button" onClick={confirmDeleteStack}></DeleteIcon>
             </div>
-            <EditStackModal
-                open={editModalOpen}
-                onClose={() => setEditModalOpen(false)}
-                stack={stack}
-                onSave={setStack}
-            />
-            <DeleteStackConfirmationModal
-                open={deleteStackModalOpen}
-                onClose={() => setDeleteStackModalOpen(false)}
-                onConfirm={handleConfirmDeleteStack}
-            />
-            <div className="stack-items">
-                <ul>
+            <Suspense fallback={<div>Loading...</div>}>
+                <EditStackModal
+                    open={editModalOpen}
+                    onClose={() => setEditModalOpen(false)}
+                    stack={stack}
+                    onSave={setStack}
+                />
+                <DeleteStackConfirmationModal
+                    open={deleteStackModalOpen}
+                    onClose={() => setDeleteStackModalOpen(false)}
+                    onConfirm={handleConfirmDeleteStack}
+                />
+                <div className="stack-items">
                     {stack.items.map(item => (
-                        <li key={item.id}>
-                            <Microlink url={item.content} />
-                        </li>
+                        <LinkRenderer url={item.content} />
                     ))}
-                </ul>
-            </div>
+                </div>
+            </Suspense>
         </div>
     );
 };
